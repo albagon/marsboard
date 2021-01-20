@@ -1,14 +1,14 @@
-let store = {
-    user: { name: "Student" },
-    apod: '',
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
-}
+let store = Immutable.Map({
+    user: Immutable.Map({ name: "Student" }),
+    apod: Immutable.Map({ }),
+    rovers: Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
+})
 
 // add our markup to the page
 const root = document.getElementById('root')
 
-const updateStore = (store, newState) => {
-    store = Object.assign(store, newState)
+const updateStore = (state, newState) => {
+    store = state.merge(newState)
     render(root, store)
 }
 
@@ -19,12 +19,11 @@ const render = async (root, state) => {
 
 // create content
 const App = (state) => {
-    let { rovers, apod } = state
 
     return `
         <header></header>
         <main>
-            ${Greeting(store.user.name)}
+            ${Greeting(state.getIn(['user', 'name']))}
             <section>
                 <h3>Put things on the page!</h3>
                 <p>Here is an example section.</p>
@@ -36,7 +35,7 @@ const App = (state) => {
                     explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
                     but generally help with discoverability of relevant imagery.
                 </p>
-                ${ImageOfTheDay(apod)}
+                ${ImageOfTheDay(state.get('apod'))}
             </section>
         </main>
         <footer></footer>
@@ -66,34 +65,29 @@ const Greeting = (name) => {
 // Example of a pure function that renders infomation requested from the backend
 const ImageOfTheDay = (apod) => {
 
-    // If image does not already exist, or it is not from today -- request it again
+    // If image does not exist, or it is not from today -- request it again
     const today = new Date()
-    const photodate = new Date(apod.date)
+    const photodate = new Date(apod.getIn(['image', 'date']))
     console.log(photodate.getDate(), today.getDate());
 
-    console.log(photodate.getDate() === today.getDate());
-    if (!apod || apod.date === today.getDate() ) {
+    console.log(photodate.getDate() !== today.getDate());
+    if (apod.size == 0 || photodate.getDate() !== today.getDate() ) {
         getImageOfTheDay(store)
-    }
-
-    if (apod.hasOwnProperty('image')) {
+    } else {
+      // we have an image or video to display
       // check if the photo of the day is actually type video!
-      if (apod.media_type === "video") {
+      if (apod.getIn(['image', 'media_type']) === "video") {
           return (`
-              <p>See today's featured video <a href="${apod.url}">here</a></p>
-              <p>${apod.title}</p>
-              <p>${apod.explanation}</p>
+              <p>See today's featured video <a href="${apod.getIn(['image', 'url'])}">here</a></p>
+              <p>${apod.getIn(['image', 'title'])}</p>
+              <p>${apod.getIn(['image', 'explanation'])}</p>
           `)
       } else {
           return (`
-              <img src="${apod.image.url}" height="350px" width="100%" />
-              <p>${apod.image.explanation}</p>
+              <img src="${apod.getIn(['image', 'url'])}" height="350px" width="100%" />
+              <p>${apod.getIn(['image', 'explanation'])}</p>
           `)
       }
-    } else {
-        return (`
-            <p>Loading...</p>
-        `)
     }
 }
 
@@ -101,7 +95,8 @@ const ImageOfTheDay = (apod) => {
 
 // Example API call
 const getImageOfTheDay = (state) => {
-    let { apod } = state
+    //let { apod } = state
+    const apod = state.get('apod')
 
     fetch(`http://localhost:3000/apod`)
         .then(res => res.json())
