@@ -76,17 +76,23 @@ const ImageOfTheDay = (apod) => {
         getImageOfTheDay(store)
     }
 
-    // check if the photo of the day is actually type video!
-    if (apod.media_type === "video") {
-        return (`
-            <p>See today's featured video <a href="${apod.url}">here</a></p>
-            <p>${apod.title}</p>
-            <p>${apod.explanation}</p>
-        `)
+    if (apod.hasOwnProperty('image')) {
+      // check if the photo of the day is actually type video!
+      if (apod.media_type === "video") {
+          return (`
+              <p>See today's featured video <a href="${apod.url}">here</a></p>
+              <p>${apod.title}</p>
+              <p>${apod.explanation}</p>
+          `)
+      } else {
+          return (`
+              <img src="${apod.image.url}" height="350px" width="100%" />
+              <p>${apod.image.explanation}</p>
+          `)
+      }
     } else {
         return (`
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
+            <p>Loading...</p>
         `)
     }
 }
@@ -101,5 +107,5 @@ const getImageOfTheDay = (state) => {
         .then(res => res.json())
         .then(apod => updateStore(store, { apod }))
 
-    return data
+    return { apod }
 }
