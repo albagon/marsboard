@@ -2,13 +2,14 @@ let store = Immutable.Map({
     user: Immutable.Map({ name: "Student" }),
     apod: Immutable.Map({ }),
     rovers: Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
+    curiosity: Immutable.Map({ }),
 })
 
 // add our markup to the page
 const root = document.getElementById('root')
 
-const updateStore = (state, newState) => {
-    store = state.merge(newState)
+const updateStore = (newState) => {
+    store = store.merge(newState)
     render(root, store)
 }
 
@@ -36,6 +37,10 @@ const App = (state) => {
                     but generally help with discoverability of relevant imagery.
                 </p>
                 ${ImageOfTheDay(state.get('apod'))}
+            </section>
+            <section>
+                <p>These are the rovers:</p>
+                ${ManifestOfRover(state.get('curiosity'))}
             </section>
         </main>
         <footer></footer>
@@ -71,7 +76,9 @@ const ImageOfTheDay = (apod) => {
     console.log(photodate.getDate(), today.getDate());
 
     console.log(photodate.getDate() !== today.getDate());
-    if (apod.size == 0 || photodate.getDate() !== today.getDate() ) {
+    //if (apod.size == 0 || photodate.getDate() !== today.getDate() ) {
+    if (apod.size == 0) {
+        console.log('this is apod', apod)
         getImageOfTheDay(store)
     } else {
       // we have an image or video to display
@@ -91,16 +98,31 @@ const ImageOfTheDay = (apod) => {
     }
 }
 
+const ManifestOfRover = (rover) => {
+    // If rover manifest does not exist, request it
+    if (rover.size == 0) {
+        getManifest(store, 'curiosity')
+    } else {
+        console.log('this is curiosity manifest after update', rover)
+        return (`
+            <p>${rover}</p>
+        `)
+    }
+}
+
 // ------------------------------------------------------  API CALLS
 
 // Example API call
 const getImageOfTheDay = (state) => {
-    //let { apod } = state
-    const apod = state.get('apod')
-
     fetch(`http://localhost:3000/apod`)
         .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
+        .then(apod => updateStore({ apod }))
 
-    return { apod }
+    //return { apod }
+}
+
+const getManifest = (state, rover) => {
+    fetch(`http://localhost:3000/${rover}-manifest`)
+        .then(res => res.json())
+        .then(curiosity => updateStore({ curiosity }))
 }
