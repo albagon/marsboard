@@ -14,11 +14,12 @@ app.use('/', express.static(path.join(__dirname, '../public')))
 
 // your API calls
 // Call to 'Mars Rover Photos' API
-app.get('/manifest/:rover', async (req, res) => {
+// Query for latest photos.
+app.get('/latest-photos/:rover', async (req, res) => {
     try {
-        const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${req.params.rover}?api_key=${process.env.API_KEY}`)
+        const photos = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${req.params.rover}/latest_photos?api_key=${process.env.API_KEY}`)
             .then(res => res.json())
-        res.send({ manifest })
+        res.send({ photos })
     } catch (err) {
         console.log('error:', err);
     }

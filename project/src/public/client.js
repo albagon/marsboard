@@ -102,23 +102,23 @@ const ImageOfTheDay = (apod) => {
 }
 
 const AddRovers = (roversList, roversObject) => {
-    console.log('Start mapping roversList')
-    const roversData = roversList.map(rover => ManifestOfRover(roversObject.get(rover), rover))
+    const roversData = roversList.map(rover => DataOfRover(roversObject.get(rover), rover))
     return PrepareHtml(roversData)
 }
 
-const ManifestOfRover = (roverObject, roverName) => {
-    // If rover manifest does not exist, request it
+const DataOfRover = (roverObject, roverName) => {
+    // If rover's data does not exist, request it
     if (roverObject.size == 0 || typeof roverObject === 'undefined') {
-        getManifest(store, roverName)
+        getRover(store, roverName)
     } else {
         return (`
-            <p>The name of the rover is ${roverObject.get('photo_manifest').get('name')}</p>
-            <p>Its Launch Date is ${roverObject.get('photo_manifest').get('launch_date')}</p>
-            <p>Its Landing Date is ${roverObject.get('photo_manifest').get('landing_date')}</p>
-            <p>Its Status is ${roverObject.get('photo_manifest').get('status')}</p>
-            <p>Its max_sol is ${roverObject.get('photo_manifest').get('max_sol')}</p>
-            <p>Date the most recent photos were taken is ${roverObject.get('photo_manifest').get('max_date')}</p>
+            <p>The name of the rover is ${roverObject.get('latest_photos').get(0).get('rover').get('name')}</p>
+            <p>Its Launch Date is ${roverObject.get('latest_photos').get(0).get('rover').get('launch_date')}</p>
+            <p>Its Landing Date is ${roverObject.get('latest_photos').get(0).get('rover').get('landing_date')}</p>
+            <p>Its Status is ${roverObject.get('latest_photos').get(0).get('rover').get('status')}</p>
+            <p>Its max_sol is ${roverObject.get('latest_photos').get(0).get('sol')}</p>
+            <p>Date the most recent photos were taken is ${roverObject.get('latest_photos').get(0).get('earth_date')}</p>
+            <img src="${roverObject.get('latest_photos').get(0).get('img_src')}" height="350px" width="100%" />
         `)
     }
 }
@@ -141,14 +141,14 @@ const getImageOfTheDay = (state) => {
     //return { apod }
 }
 
-const getManifest = (state, rover) => {
-    fetch(`http://localhost:3000/manifest/${rover}`)
+const getRover = (state, rover) => {
+    fetch(`http://localhost:3000/latest-photos/${rover}`)
         .then(res => res.json())
         .then(data => {
-                          const newRoverManifest = {
+                          const newRovers = {
                               rovers: {}
                           }
-                          newRoverManifest.rovers[rover] = data.manifest
-                          updateStore(newRoverManifest)
+                          newRovers.rovers[rover] = data.photos
+                          updateStore(newRovers)
                       })
 }
