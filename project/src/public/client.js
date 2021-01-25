@@ -142,7 +142,7 @@ const getImageOfTheDay = (state) => {
 }
 
 const getManifest = (state, rover) => {
-    fetch(`http://localhost:3000/${rover}-manifest`)
+    fetch(`http://localhost:3000/manifest/${rover}`)
         .then(res => res.json())
         .then(data => {
                           const newRoverManifest = {

@@ -14,29 +14,9 @@ app.use('/', express.static(path.join(__dirname, '../public')))
 
 // your API calls
 // Call to 'Mars Rover Photos' API
-app.get('/curiosity-manifest', async (req, res) => {
+app.get('/manifest/:rover', async (req, res) => {
     try {
-        const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/curiosity?api_key=${process.env.API_KEY}`)
-            .then(res => res.json())
-        res.send({ manifest })
-    } catch (err) {
-        console.log('error:', err);
-    }
-})
-
-app.get('/opportunity-manifest', async (req, res) => {
-    try {
-        const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/opportunity?api_key=${process.env.API_KEY}`)
-            .then(res => res.json())
-        res.send({ manifest })
-    } catch (err) {
-        console.log('error:', err);
-    }
-})
-
-app.get('/spirit-manifest', async (req, res) => {
-    try {
-        const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/spirit?api_key=${process.env.API_KEY}`)
+        const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${req.params.rover}?api_key=${process.env.API_KEY}`)
             .then(res => res.json())
         res.send({ manifest })
     } catch (err) {
