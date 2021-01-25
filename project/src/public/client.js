@@ -1,15 +1,18 @@
 let store = Immutable.Map({
     user: Immutable.Map({ name: "Student" }),
     apod: Immutable.Map({ }),
-    rovers: Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
-    curiosity: Immutable.Map({ }),
+    roversList: Immutable.List(['curiosity', 'opportunity', 'spirit']),
+    rovers: Immutable.Map({ curiosity: Immutable.Map({ }),
+                            opportunity: Immutable.Map({ }),
+                            spirit: Immutable.Map({ })
+                          })
 })
 
 // add our markup to the page
 const root = document.getElementById('root')
 
 const updateStore = (newState) => {
-    store = store.merge(newState)
+    store = store.mergeDeep(newState)
     render(root, store)
 }
 
@@ -40,7 +43,7 @@ const App = (state) => {
             </section>
             <section>
                 <p>These are the rovers:</p>
-                ${ManifestOfRover(state.get('curiosity'))}
+                ${AddRovers(state.get('roversList'), state.get('rovers'))}
             </section>
         </main>
         <footer></footer>
@@ -98,16 +101,33 @@ const ImageOfTheDay = (apod) => {
     }
 }
 
-const ManifestOfRover = (rover) => {
+const AddRovers = (roversList, roversObject) => {
+    console.log('Start mapping roversList')
+    const roversData = roversList.map(rover => ManifestOfRover(roversObject.get(rover), rover))
+    return PrepareHtml(roversData)
+}
+
+const ManifestOfRover = (roverObject, roverName) => {
     // If rover manifest does not exist, request it
-    if (rover.size == 0) {
-        getManifest(store, 'curiosity')
+    if (roverObject.size == 0 || typeof roverObject === 'undefined') {
+        getManifest(store, roverName)
     } else {
-        console.log('this is curiosity manifest after update', rover)
         return (`
-            <p>${rover}</p>
+            <p>The name of the rover is ${roverObject.get('photo_manifest').get('name')}</p>
+            <p>Its Launch Date is ${roverObject.get('photo_manifest').get('launch_date')}</p>
+            <p>Its Landing Date is ${roverObject.get('photo_manifest').get('landing_date')}</p>
+            <p>Its Status is ${roverObject.get('photo_manifest').get('status')}</p>
+            <p>Its max_sol is ${roverObject.get('photo_manifest').get('max_sol')}</p>
+            <p>Date the most recent photos were taken is ${roverObject.get('photo_manifest').get('max_date')}</p>
         `)
     }
+}
+
+const PrepareHtml = (roversData) => {
+    const roversString = roversData.reduce((accum, rover) => {
+                                        return accum + rover
+                                    }, '')
+    return `<p>HERE IT GOES ${roversString}</p>`
 }
 
 // ------------------------------------------------------  API CALLS
@@ -124,5 +144,11 @@ const getImageOfTheDay = (state) => {
 const getManifest = (state, rover) => {
     fetch(`http://localhost:3000/${rover}-manifest`)
         .then(res => res.json())
-        .then(curiosity => updateStore({ curiosity }))
+        .then(data => {
+                          const newRoverManifest = {
+                              rovers: {}
+                          }
+                          newRoverManifest.rovers[rover] = data.manifest
+                          updateStore(newRoverManifest)
+                      })
 }
