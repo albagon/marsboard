@@ -75,7 +75,7 @@ const DataOfRover = (roverObject, roverName) => {
                 <p>Its Status is ${roverObject.get('latest_photos').get(0).get('rover').get('status')}</p>
                 <p>Its max_sol is ${roverObject.get('latest_photos').get(0).get('sol')}</p>
                 <p>Date the most recent photos were taken is ${roverObject.get('latest_photos').get(0).get('earth_date')}</p>
-                <img src="${roverObject.get('latest_photos').get(0).get('img_src')}" height="350px" width="100%" />
+                <div>${roverObject.get('latest_photos').slice(-4).reduce((acc, curr) => ReducePhotos(acc, curr), '')}</div>
             </div>
         `)
     }
@@ -86,6 +86,11 @@ const PrepareHtml = (roversData) => {
                                         return accum + rover
                                     }, '')
     return roversString
+}
+
+const ReducePhotos = (acc, curr) => {
+    const accumulator = acc + `<img src="${curr.get('img_src')}" width="100%" />`
+    return accumulator
 }
 
 // ------------------------------------------------------  API CALLS
