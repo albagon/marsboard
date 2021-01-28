@@ -28,7 +28,8 @@ const App = (state) => {
         <main>
             ${Greeting(state.getIn(['user', 'name']))}
             <section>
-                <h3>These are the rovers:</h3>
+                <p>Thanks to the NASA APIs available, we have access to NASA data, including imagery. Here you can find the most recent data from the rovers on Mars. For more information, please visit the <a href="https://api.nasa.gov/" target="_blank">api.nasa.gov</a> catalog, it is constantly growing.</p>
+                <p>Choose between <button id="curiosity-btn" class="rover-btn">Curiosity</button><button id="opportunity-btn" class="rover-btn">Opportunity</button> and <button id="spirit-btn" class="rover-btn">Spirit</button> rovers to see more details about their trips and latest photos.</p>
                 ${AddRovers(state.get('roversList'), state.get('rovers'))}
             </section>
         </main>
@@ -68,14 +69,20 @@ const DataOfRover = (roverObject, roverName) => {
         getRover(store, roverName)
     } else {
         return (`
-            <div>
-                <p>The name of the rover is ${roverObject.get('latest_photos').get(0).get('rover').get('name')}</p>
-                <p>Its Launch Date is ${roverObject.get('latest_photos').get(0).get('rover').get('launch_date')}</p>
-                <p>Its Landing Date is ${roverObject.get('latest_photos').get(0).get('rover').get('landing_date')}</p>
-                <p>Its Status is ${roverObject.get('latest_photos').get(0).get('rover').get('status')}</p>
-                <p>Its max_sol is ${roverObject.get('latest_photos').get(0).get('sol')}</p>
-                <p>Date the most recent photos were taken is ${roverObject.get('latest_photos').get(0).get('earth_date')}</p>
-                <div>${roverObject.get('latest_photos').slice(-4).reduce((acc, curr) => ReducePhotos(acc, curr), '')}</div>
+            <div id="${roverObject.get('latest_photos').get(0).get('rover').get('name')}-box" class="rover-box">
+                <h2>${roverObject.get('latest_photos').get(0).get('rover').get('name')}</h2>
+                <ul class="details-list">
+                    <li>Launch Date: ${roverObject.get('latest_photos').get(0).get('rover').get('launch_date')}</li>
+                    <li>Landing Date: ${roverObject.get('latest_photos').get(0).get('rover').get('landing_date')}</li>
+                    <li>Status: ${roverObject.get('latest_photos').get(0).get('rover').get('status')}</li>
+                    <li>Max_sol*: ${roverObject.get('latest_photos').get(0).get('sol')}</li>
+                    <li>Date the most recent photos were taken: ${roverObject.get('latest_photos').get(0).get('earth_date')}</li>
+                </ul>
+                <p class="note">*Photos are organized by the sol (Martian rotation or day) on which they were taken, counting up from the rover's landing date. A photo taken on ${roverObject.get('latest_photos').get(0).get('rover').get('name')}'s 1000th Martian sol exploring Mars, for example, will have a sol attribute of 1000.</p>
+                <div>
+                    <h2>Latest photos</h2>
+                    ${roverObject.get('latest_photos').slice(-4).reduce((acc, curr) => ReducePhotos(acc, curr), '')}
+                </div>
             </div>
         `)
     }
@@ -89,7 +96,7 @@ const PrepareHtml = (roversData) => {
 }
 
 const ReducePhotos = (acc, curr) => {
-    const accumulator = acc + `<img src="${curr.get('img_src')}" width="100%" />`
+    const accumulator = acc + `<div class="img-box"><img src="${curr.get('img_src')}" width="100%" /></div>`
     return accumulator
 }
 
