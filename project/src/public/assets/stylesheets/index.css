@@ -65,17 +65,24 @@ h1, h2, h3, h4, h5 {
 
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
-  /* use mobile */
+  .img-box {
+    width: 45%;
+    padding: 10px;
+    display: inline-block;
+    vertical-align: top;
+  }
 }
 
 /* -------------------  DESKTOP  -------------------- */
 
 @media (min-width: 1224px) {
-  /* use mobile */
+  .img-box {
+    width: 30%;
+  }
 }
 
 /* -------------------  LARGE SCREENS  -------------- */
 
 @media (min-width: 1824px) {
-  /* use mobile */
+  /* use desktop settings */
 }
