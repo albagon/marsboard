@@ -98,19 +98,17 @@ const AddRover = (rovers, rover) => {
 
 // Pure function that renders one button per rover
 const AddButtons = (roversList) => {
-    const buttons = roversList.reduce((acc, curr) => {
+    return roversList.reduce((acc, curr) => {
       return `
           ${acc}<button id="${curr}-btn" class="rover-btn" onclick="showRover('${curr}')">${curr}</button>
       `
     }, '')
-    return buttons
 }
 
 // ------------------------------------------------------  PURE FUNCTIONS
 
 const reducePhotos = (acc, curr) => {
-    const accumulator = acc + `<div class="img-box"><img src="${curr.get('img_src')}" width="100%" /></div>`
-    return accumulator
+    return acc + `<div class="img-box"><img src="${curr.get('img_src')}" width="100%" /></div>`
 }
 
 // Show a rover's box and hide the rest of boxes
