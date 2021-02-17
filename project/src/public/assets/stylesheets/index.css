@@ -56,6 +56,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .rover-box {
+  display: none;
   border: 1px solid #ccc!important;
   border-radius: 16px;
   padding: 10px 16px;
