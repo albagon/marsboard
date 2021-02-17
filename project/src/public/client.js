@@ -35,7 +35,9 @@ const App = (state) => {
                 catalog, it is constantly growing.</p>
                 <p>Choose between ${AddButtons(state.get('roversList'))} rovers
                 to see more details about their trips and latest photos.</p>
-                ${AddRovers(state.get('roversList'), state.get('rovers'))}
+                ${AddRover(state.get('rovers'), state.get('roversList').get(0))}
+                ${AddRover(state.get('rovers'), state.get('roversList').get(1))}
+                ${AddRover(state.get('rovers'), state.get('roversList').get(2))}
             </section>
         </main>
         <footer></footer>
@@ -63,28 +65,11 @@ const Greeting = (name) => {
 }
 
 // Pure function that renders the rovers' data
-const AddRovers = (roversList, roversObject) => {
-    const roversData = roversList.map(rover => dataOfRover(roversObject.get(rover), rover))
-    return prepareHtml(roversData)
-}
-
-// Pure function that renders one button per rover
-const AddButtons = (roversList) => {
-    const buttons = roversList.reduce((acc, curr) => {
-      return `
-          ${acc}<button id="${curr}-btn" class="rover-btn" onclick="showRover('${curr}')">${curr}</button>
-      `
-    }, '')
-    return buttons
-}
-
-// ------------------------------------------------------  PURE FUNCTIONS
-
-// A pure function that renders infomation requested from the backend
-const dataOfRover = (roverObject, roverName) => {
+const AddRover = (rovers, rover) => {
+    const roverObject = rovers.get(rover)
     // If rover's data does not exist, request it
     if (roverObject.size == 0 || typeof roverObject === 'undefined') {
-        getRover(store, roverName)
+        getRover(store, rover)
         return ``
     } else {
         const latestPhotos = roverObject.get('latest_photos').get(0);
@@ -111,12 +96,17 @@ const dataOfRover = (roverObject, roverName) => {
     }
 }
 
-const prepareHtml = (roversData) => {
-    const roversString = roversData.reduce((accum, rover) => {
-                                        return accum + rover
-                                    }, '')
-    return roversString
+// Pure function that renders one button per rover
+const AddButtons = (roversList) => {
+    const buttons = roversList.reduce((acc, curr) => {
+      return `
+          ${acc}<button id="${curr}-btn" class="rover-btn" onclick="showRover('${curr}')">${curr}</button>
+      `
+    }, '')
+    return buttons
 }
+
+// ------------------------------------------------------  PURE FUNCTIONS
 
 const reducePhotos = (acc, curr) => {
     const accumulator = acc + `<div class="img-box"><img src="${curr.get('img_src')}" width="100%" /></div>`
