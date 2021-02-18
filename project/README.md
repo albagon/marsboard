@@ -4,9 +4,9 @@
 
 ### Big Picture
 
-This is a Mars rover dashboard that consumes [NASA's Mars Rover Photos API] (https://api.nasa.gov/). Using the dashboard, the user will be able to select which rover's information they want to view. Once they have selected a rover, they will be able to see the most recent images taken by that rover, as well as important information about the rover and its mission.
+This is a Mars rover dashboard that consumes [NASA's Mars Rover Photos API](https://api.nasa.gov/). Using the dashboard, the user will be able to select which rover's information they want to view. Once they have selected a rover, they will be able to see the most recent images taken by that rover, as well as important information about the rover and its mission.
 
-The main goal of this project is to make use of all the functional concepts and practices I have learned in the Intermediate JavaScript Nanodegree from [Udacity] (https://www.udacity.com/). Making sure that I become very comfortable using pure functions and iterating over, reshaping, and accessing information from complex API responses.
+The main goal of this project is to make use of all the functional concepts and practices I have learned in the Intermediate JavaScript Nanodegree from [Udacity](https://www.udacity.com/). Making sure that I become very comfortable using pure functions and iterating over, reshaping, and accessing information from complex API responses.
 
 ### Getting Started
 
